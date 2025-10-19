@@ -33,7 +33,13 @@ public final class ForwardHelper {
             return ACCESSORS.containsKey(name);
         }
         final Accessor access = Accessor.of(clazz);
-        final Object object = access.findMethod("id", "getIdentifier").invoke(generator, "id");
+        try {
+            access.findMethod("id", "getIdentifier");
+        } catch(NoClassDefFoundError err) {
+            LIST.add(name);
+            return false;
+        }
+        final Object object = access.invoke(generator, "id");
         final boolean valid = object != null && (long) object == 345679324062398605L;
         LIST.add(name);
         if (!valid) {
